@@ -1,0 +1,15 @@
+﻿@model HotelManagementSystem.ViewModels.HotelManager.RoomTypeEditVm
+@{ ViewData["Title"] = Model.Id.HasValue ? "编辑房型" : "新增房型"; }
+<div class="card shadow-sm border-0"><div class="card-body">
+<h4>@ViewData["Title"]</h4>
+<form method="post">@Html.AntiForgeryToken()@if(Model.Id.HasValue){<input type="hidden" asp-for="Id" />}
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="row g-3">
+<div class="col-md-6"><label asp-for="Name" class="form-label"></label><input asp-for="Name" class="form-control" /></div>
+<div class="col-md-3"><label asp-for="PricePerNight" class="form-label"></label><input asp-for="PricePerNight" class="form-control" /></div>
+<div class="col-md-3"><label asp-for="Inventory" class="form-label"></label><input asp-for="Inventory" class="form-control" /></div>
+<div class="col-md-3 d-flex align-items-end"><div class="form-check"><input asp-for="IsActive" class="form-check-input" /><label asp-for="IsActive" class="form-check-label">上架</label></div></div>
+</div>
+<button class="btn btn-primary mt-3">保存</button> <a class="btn btn-outline-secondary mt-3" asp-action="Index">返回</a>
+</form></div></div>
+@section Scripts{<partial name="_ValidationScriptsPartial" />}

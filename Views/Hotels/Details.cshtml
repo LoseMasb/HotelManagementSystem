@@ -1,0 +1,98 @@
+@model HotelManagementSystem.ViewModels.Customer.HotelDetailsVm
+@{
+    ViewData["Title"] = "酒店详情";
+}
+
+<section class="glass-card p-4 p-md-5 mb-4">
+    <p class="eyebrow mb-2">HOTEL PROFILE</p>
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+        <div>
+            <h2 class="mb-2">@Model.Hotel.Name</h2>
+            <p class="text-muted mb-2">📍 @Model.Hotel.City · @Model.Hotel.Address</p>
+            <p class="mb-0 section-subtitle">@Model.Hotel.Description</p>
+        </div>
+        <div class="hero-metrics">
+            <div class="metric-card">
+                <span class="metric-value">@Model.RoomTypes.Count()</span>
+                <span class="metric-label">房型数量</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <aside class="glass-card p-4 oc-sticky-panel">
+            <h6 class="fw-semibold mb-3">按日期查询库存</h6>
+            <form method="get" class="d-grid gap-2">
+                <input type="hidden" name="id" value="@Model.Hotel.Id" />
+                <label class="form-label mb-0" for="checkInDate">入住日期</label>
+                <input id="checkInDate" type="date" class="form-control" name="checkInDate" value="@Model.CheckInDate" required />
+                <label class="form-label mb-0 mt-1" for="checkOutDate">离店日期</label>
+                <input id="checkOutDate" type="date" class="form-control" name="checkOutDate" value="@Model.CheckOutDate" required />
+                <button class="btn btn-primary mt-2">查询可用房间</button>
+            </form>
+        </aside>
+    </div>
+
+    <div class="col-lg-8">
+        <section class="glass-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">房型与库存</h5>
+                <span class="section-subtitle">实时余量</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>房型</th>
+                        <th>价格/晚</th>
+                        <th>总库存</th>
+                        <th>可用库存</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var rt in Model.RoomTypes)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@rt.RoomTypeName</td>
+                            <td>￥@rt.PricePerNight</td>
+                            <td>@rt.Inventory</td>
+                            <td><span class="badge badge-soft">@rt.AvailableQuantity</span></td>
+                            <td>
+                                @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Customer"))
+                                {
+                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#book-@rt.RoomTypeId" aria-expanded="false">预订</button>
+                                }
+                            </td>
+                        </tr>
+                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Customer"))
+                        {
+                            <tr class="collapse" id="book-@rt.RoomTypeId">
+                                <td colspan="5">
+                                    <form asp-controller="Bookings" asp-action="Create" method="post" class="row g-2 py-2">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="RoomTypeId" value="@rt.RoomTypeId" />
+                                        <div class="col-md-3"><input type="date" name="CheckInDate" class="form-control" value="@Model.CheckInDate" required /></div>
+                                        <div class="col-md-3"><input type="date" name="CheckOutDate" class="form-control" value="@Model.CheckOutDate" required /></div>
+                                        <div class="col-md-2"><input type="number" name="Quantity" class="form-control" value="1" min="1" max="20" required /></div>
+                                        <div class="col-md-3"><input type="text" name="Remark" class="form-control" placeholder="备注(可选)" /></div>
+                                        <div class="col-md-1"><button class="btn btn-success w-100">提交</button></div>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (User.Identity?.IsAuthenticated != true)
+            {
+                <div class="alert alert-info mt-3 mb-0">登录客户账号后可直接下单。</div>
+            }
+        </section>
+    </div>
+</div>

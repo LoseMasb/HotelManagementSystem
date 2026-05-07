@@ -1,0 +1,74 @@
+@model HotelManagementSystem.ViewModels.Customer.HotelListVm
+@{
+    ViewData["Title"] = "酒店列表";
+}
+
+<section class="hero-panel glass-card p-4 p-md-5 mb-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-4 align-items-start align-items-lg-center">
+        <div>
+            <p class="eyebrow mb-2">SMART BOOKING EXPERIENCE</p>
+            <h1 class="display-title mb-2">发现更有质感的入住体验</h1>
+            <p class="section-subtitle mb-0">快速检索城市与酒店，实时查看房型库存与预订入口。</p>
+        </div>
+        <div class="hero-metrics">
+            <div class="metric-card">
+                <span class="metric-value">@Model.Hotels.Count()</span>
+                <span class="metric-label">当前页酒店</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value">@Model.TotalPages</span>
+                <span class="metric-label">分页数量</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="glass-card p-4">
+    <form method="get" class="search-shell row g-2 mb-4 align-items-stretch">
+        <div class="col-lg-8">
+            <label class="form-label visually-hidden" for="search">搜索酒店</label>
+            <input id="search" class="form-control form-control-lg" name="search" value="@Model.Search" placeholder="搜索酒店名 / 城市 / 关键词" />
+        </div>
+        <div class="col-6 col-lg-2"><button class="btn btn-primary w-100 h-100" type="submit">搜索</button></div>
+        <div class="col-6 col-lg-2"><a class="btn btn-outline-secondary w-100 h-100 d-inline-flex align-items-center justify-content-center" asp-action="Index">重置</a></div>
+    </form>
+
+    <div class="row g-3 g-md-4">
+        @foreach (var item in Model.Hotels)
+        {
+            <div class="col-md-6 col-xl-4">
+                <article class="hotel-card card h-100 oc-hover-lift">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h5 class="fw-semibold mb-0">@item.Name</h5>
+                            <span class="chip">@item.City</span>
+                        </div>
+                        <p class="text-muted mb-3">📍 @item.Address</p>
+                        <div class="mt-auto">
+                            <a class="btn btn-primary w-100" asp-action="Details" asp-route-id="@item.Id">查看详情</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Hotels.Any())
+    {
+        <div class="alert alert-light border mt-4 mb-0">没有匹配的酒店，试试更换关键词。</div>
+    }
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="mt-4" aria-label="酒店分页">
+            <ul class="pagination justify-content-center mb-0">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.Page ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@i">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</section>

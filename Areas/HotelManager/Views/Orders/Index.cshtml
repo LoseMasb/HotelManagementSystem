@@ -1,0 +1,55 @@
+﻿@model IEnumerable<HotelManagementSystem.ViewModels.HotelManager.ManagerOrderVm>
+@using HotelManagementSystem.Models
+@{ ViewData["Title"] = "酒店端-订单管理"; }
+
+<div class="manager-tabs mb-3">
+    <a class="btn btn-outline-primary" asp-area="HotelManager" asp-controller="Hotels" asp-action="Edit">酒店信息</a>
+    <a class="btn btn-outline-primary" asp-area="HotelManager" asp-controller="RoomTypes" asp-action="Index">房型管理</a>
+    <a class="btn btn-primary" asp-area="HotelManager" asp-controller="Orders" asp-action="Index">订单管理</a>
+</div>
+
+<section class="glass-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div>
+            <h4 class="mb-1">订单管理</h4>
+            <p class="section-subtitle mb-0">卡片化订单视图，移动端阅读与操作更轻松。</p>
+        </div>
+        <span class="chip">共 @Model.Count() 条</span>
+    </div>
+
+    <div class="manager-grid">
+        @foreach (var x in Model)
+        {
+            <article class="manager-card">
+                <div class="manager-card-head">
+                    <h5 class="mb-0">订单 #@x.BookingId</h5>
+                    <span class="chip">@x.Status</span>
+                </div>
+
+                <div class="manager-kv mt-3">
+                    <div><span>客户</span><strong>@x.CustomerEmail</strong></div>
+                    <div><span>房型</span><strong>@x.RoomTypeName</strong></div>
+                    <div><span>日期</span><strong>@x.CheckInDate ~ @x.CheckOutDate</strong></div>
+                    <div><span>数量</span><strong>@x.Quantity</strong></div>
+                </div>
+
+                <form asp-action="UpdateStatus" method="post" class="manager-status-form mt-3">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="bookingId" value="@x.BookingId" />
+                    <select class="form-select form-select-sm" name="status" aria-label="更新订单状态">
+                        @foreach (var s in Enum.GetValues<BookingStatus>())
+                        {
+                            <option value="@s" selected="@(x.Status==s)">@s</option>
+                        }
+                    </select>
+                    <button class="btn btn-sm btn-outline-primary">更新状态</button>
+                </form>
+            </article>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-light border mt-3 mb-0">暂无订单。</div>
+    }
+</section>

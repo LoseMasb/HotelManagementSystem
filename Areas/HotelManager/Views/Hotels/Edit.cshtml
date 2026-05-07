@@ -1,0 +1,40 @@
+﻿@model HotelManagementSystem.ViewModels.HotelManager.MyHotelEditVm
+@{ ViewData["Title"] = "酒店端-酒店信息"; }
+
+<div class="manager-tabs mb-3">
+    <a class="btn btn-primary" asp-area="HotelManager" asp-controller="Hotels" asp-action="Edit">酒店信息</a>
+    <a class="btn btn-outline-primary" asp-area="HotelManager" asp-controller="RoomTypes" asp-action="Index">房型管理</a>
+    <a class="btn btn-outline-primary" asp-area="HotelManager" asp-controller="Orders" asp-action="Index">订单管理</a>
+</div>
+
+<section class="glass-card p-4">
+    <h4 class="mb-3">编辑酒店信息</h4>
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <label asp-for="City" class="form-label"></label>
+                <input asp-for="City" class="form-control" />
+            </div>
+            <div class="col-12">
+                <label asp-for="Address" class="form-label"></label>
+                <input asp-for="Address" class="form-control" />
+            </div>
+            <div class="col-12">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            </div>
+        </div>
+
+        <button class="btn btn-primary mt-3">保存</button>
+    </form>
+</section>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

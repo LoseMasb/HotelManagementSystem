@@ -1,0 +1,29 @@
+﻿@model IEnumerable<HotelManagementSystem.Models.Hotel>
+@{
+    ViewData["Title"] = "管理员-酒店管理";
+}
+<div class="d-flex justify-content-between mb-3">
+    <h4>酒店管理</h4>
+    <a class="btn btn-primary" asp-action="Create">新增酒店</a>
+</div>
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-8"><input class="form-control" name="search" value="@ViewBag.Search" placeholder="搜索酒店" /></div>
+    <div class="col-md-2"><button class="btn btn-outline-primary w-100">搜索</button></div>
+</form>
+<table class="table table-bordered align-middle bg-white">
+    <thead><tr><th>ID</th><th>名称</th><th>城市</th><th>管理员</th><th>状态</th><th>操作</th></tr></thead>
+    <tbody>
+    @foreach (var h in Model)
+    {
+        <tr>
+            <td>@h.Id</td><td>@h.Name</td><td>@h.City</td><td>@(h.ManagerUser?.Email ?? "未分配")</td><td>@(h.IsEnabled ? "启用" : "停用")</td>
+            <td>
+                <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@h.Id">编辑</a>
+                <form asp-action="Delete" asp-route-id="@h.Id" method="post" class="d-inline" onsubmit="return confirm('确认删除?');">
+                    @Html.AntiForgeryToken()<button class="btn btn-sm btn-outline-danger">删除</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

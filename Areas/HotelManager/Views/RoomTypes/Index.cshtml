@@ -1,0 +1,48 @@
+﻿@model IEnumerable<HotelManagementSystem.Models.RoomType>
+@{ ViewData["Title"] = "酒店端-房型管理"; }
+
+<div class="manager-tabs mb-3">
+    <a class="btn btn-outline-primary" asp-area="HotelManager" asp-controller="Hotels" asp-action="Edit">酒店信息</a>
+    <a class="btn btn-primary" asp-area="HotelManager" asp-controller="RoomTypes" asp-action="Index">房型管理</a>
+    <a class="btn btn-outline-primary" asp-area="HotelManager" asp-controller="Orders" asp-action="Index">订单管理</a>
+</div>
+
+<section class="glass-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div>
+            <h4 class="mb-1">房型管理</h4>
+            <p class="section-subtitle mb-0">卡片视图展示价格、库存、状态与操作</p>
+        </div>
+        <a class="btn btn-success" asp-action="Create">新增房型</a>
+    </div>
+
+    <div class="manager-grid">
+        @foreach (var x in Model)
+        {
+            <article class="manager-card">
+                <div class="manager-card-head">
+                    <h5 class="mb-0">@x.Name</h5>
+                    <span class="status-dot @(x.IsActive ? "is-active" : "is-inactive")">@(x.IsActive ? "上架" : "下架")</span>
+                </div>
+
+                <div class="manager-kv mt-3">
+                    <div><span>价格/晚</span><strong>￥@x.PricePerNight</strong></div>
+                    <div><span>库存</span><strong>@x.Inventory 间</strong></div>
+                </div>
+
+                <div class="manager-actions mt-3">
+                    <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@x.Id">编辑</a>
+                    <form asp-action="Delete" asp-route-id="@x.Id" method="post" class="d-inline" onsubmit="return confirm('确认删除?');">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-sm btn-outline-danger">删除</button>
+                    </form>
+                </div>
+            </article>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-light border mt-3 mb-0">暂无房型，点击“新增房型”开始配置。</div>
+    }
+</section>
